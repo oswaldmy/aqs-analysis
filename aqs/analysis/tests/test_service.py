@@ -1,6 +1,4 @@
-from .service import run_dml_athena_query
-
-
+from aqs.analysis.service import run_dml_athena_query
 
 
 class FakeAthenaClient:

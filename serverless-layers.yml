@@ -7,7 +7,7 @@ provider:
   stage: ${opt:stage, 'dev'}
   region: ${env:AWS_REGION, 'eu-west-1'}
   profile: ${env:AWS_PROFILE, 'default'}
-  account: ${env:AWS_ACCOUNT, '237279242218'}
+  account: ${env:AWS_ACCOUNT, ''}
 
 package:
   individually: true

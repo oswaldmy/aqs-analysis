@@ -14,7 +14,7 @@ provider:
   memorySize: 3008
   timeout: 900
   profile: ${env:AWS_PROFILE, 'default'}
-  account: ${env:AWS_ACCOUNT, '237279242218'}
+  account: ${env:AWS_ACCOUNT, ''}
   iamRoleStatements:
     - Effect: "Allow"
       Action:
