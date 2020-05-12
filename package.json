@@ -1,0 +1,26 @@
+{
+    "name": "vw-data-lab",
+    "version": "2.32.2",
+    "description": "VW Datalab Datalake lambda functions",
+    "dependencies": {
+        "serverless-iam-roles-per-function": "^2.0.2",
+        "serverless-latest-layer-version": "^2.1.0",
+        "serverless-pseudo-parameters": "^2.5.0"
+    },
+    "devDependencies": {
+        "serverless": "^1.59.3"
+    },
+    "scripts": {
+        "info": "serverless info",
+        "sls": "sls",
+        "deploy-layers": "sls deploy --config=serverless-layers.yml",
+        "remove-layers": "sls remove --config=serverless-layers.yml",
+        "deploy-etl": "sls deploy --config=serverless-etl.yml",
+        "remove-etl": "sls remove --config=serverless-etl.yml",
+        "deploy-analysis": "sls deploy --config=serverless-analysis.yml",
+        "remove-analysis": "sls deploy --config=serverless-analysis.yml"
+    },
+    "author": "Oswald",
+    "license": "",
+    "homepage": "https://oswald.org/#readme"
+}

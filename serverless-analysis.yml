@@ -1,0 +1,79 @@
+service: aqs-analysis
+frameworkVersion: ">=1.47.0 <2.0.0"
+
+plugins:
+  - serverless-pseudo-parameters
+  - serverless-iam-roles-per-function
+  - serverless-latest-layer-version
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'dev'}
+  region: ${env:AWS_REGION, 'eu-west-1'}
+  memorySize: 3008
+  timeout: 900
+  profile: ${env:AWS_PROFILE, 'default'}
+  account: ${env:AWS_ACCOUNT, ''}
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - xray:PutTelemetryRecords
+        - xray:PutTraceSegments
+      Resource: "*"
+
+custom:
+  project: aqs
+  namespace: aqs
+  pythonRequirements:
+    usePoetry: false
+    usePipenv: false
+    slim: true
+
+  resources_prefix: ${self:service.name}
+
+  layers:
+    requests: arn:aws:lambda:${self:provider.region}:${self:provider.account}:layer:requests:latest
+    pandas: arn:aws:lambda:${self:provider.region}:${self:provider.account}:layer:pandas:latest
+
+  etl_bucket: ${file(serverless.env.yml):etl_bucket.${self:provider.stage}}
+
+package:
+  individually: true
+  excludeDevDependencies: false
+  exclude:
+    - "**"
+  include:
+    - "./aqs/lib/**"
+    - "./aqs/*.py"
+functions:
+  analysis:
+    handler: aqs.analysis.handler.handle
+    package:
+      include:
+        - "./aqs/analysis/**"
+    tags:
+      Stage: ${self:provider.stage}
+      Project: ${self:custom.project}
+    layers:
+      - ${self:custom.layers.requests}
+      - ${self:custom.layers.pandas}
+    events:
+      - schedule:
+          name: ${self:custom.resources_prefix}-analysis
+          description: "cron trigger for Lambda function: ${self:custom.resources_prefix}-analysis"
+          rate: rate(1 minute)
+          enabled: true
+    iamRoleStatementsInherit: true
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - s3:PutObject
+          - s3:ListBucket
+          - s3:GetObject
+        Resource:
+          - arn:aws:s3:::${self:custom.etl_bucket}*
+          - arn:aws:s3:::${self:custom.etl_bucket}/*
+      - Effect: Allow
+        Action: "*"
+        Resource: "*"

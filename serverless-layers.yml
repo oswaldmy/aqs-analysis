@@ -1,0 +1,24 @@
+service: vw-data-lab-layers-nc
+frameworkVersion: ">=1.47.0 <2.0.0"
+
+provider:
+  name: aws
+  runtime: python3.7
+  stage: ${opt:stage, 'dev'}
+  region: ${env:AWS_REGION, 'eu-west-1'}
+  profile: ${env:AWS_PROFILE, 'default'}
+  account: ${env:AWS_ACCOUNT, '237279242218'}
+
+package:
+  individually: true
+  excludeDevDependencies: false
+
+layers:
+  requests:
+    description: Layer containing request library for lambda functions
+    package:
+      artifact: ./layers/requests.zip
+  pandas:
+    description: Layer containing pandas library for lambda functions
+    package:
+      artifact: ./layers/pandas.zip
